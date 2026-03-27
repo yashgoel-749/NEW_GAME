@@ -26,6 +26,32 @@ const wss = new WebSocket.Server({ server });
 // ─── Game State ──────────────────────────────────────────
 const rooms = {};
 
+function isWalkable(map, x, y) {
+    const gx = Math.floor(x);
+    const gy = Math.floor(y);
+    return gy >= 0 && gy < map.length && gx >= 0 && gx < map[0].length && map[gy][gx] === 0;
+}
+
+function chooseSpawn(roomData, playerSlot) {
+    const base = playerSlot === 1
+        ? { px: 5, py: 5, color: '#f43f5e' }
+        : { px: 15, py: 10, color: '#facc15' };
+
+    if (isWalkable(roomData.map, base.px, base.py) && !Object.values(roomData.players).some(p => Math.round(p.px) === base.px && Math.round(p.py) === base.py)) {
+        return base;
+    }
+
+    for (let y = 0; y < roomData.map.length; y++) {
+        for (let x = 0; x < roomData.map[y].length; x++) {
+            if (roomData.map[y][x] === 0 && !Object.values(roomData.players).some(p => Math.round(p.px) === x && Math.round(p.py) === y)) {
+                return { px: x, py: y, color: base.color };
+            }
+        }
+    }
+
+    return base;
+}
+
 // ─── Connection Handler ──────────────────────────────────
 wss.on('connection', (ws, req) => {
     const params = new URL(req.url, 'http://localhost').searchParams;
@@ -46,10 +72,12 @@ wss.on('connection', (ws, req) => {
     // Assign player slot
     if (!roomData.players[1]) {
         playerId = 1;
-        roomData.players[1] = { px: 5, py: 5, color: '#f43f5e' };
+        const spawn = chooseSpawn(roomData, 1);
+        roomData.players[1] = { px: spawn.px, py: spawn.py, color: spawn.color };
     } else if (!roomData.players[2]) {
         playerId = 2;
-        roomData.players[2] = { px: 15, py: 10, color: '#facc15' };
+        const spawn = chooseSpawn(roomData, 2);
+        roomData.players[2] = { px: spawn.px, py: spawn.py, color: spawn.color };
     } else {
         ws.send(JSON.stringify({ type: 'error', message: 'Room is full! (Max 2 players)' }));
         ws.close();
@@ -178,8 +206,8 @@ function updatePlayers(roomData) {
         if (keys.a || keys.arrowleft)  newX -= moveAmount;
         if (keys.d || keys.arrowright) newX += moveAmount;
 
-        const gridX = Math.round(newX);
-        const gridY = Math.round(newY);
+        const gridX = Math.floor(newX);
+        const gridY = Math.floor(newY);
 
         if (gridX >= 0 && gridX < 32 && gridY >= 0 && gridY < 16) {
             if (roomData.map[gridY][gridX] === 0) {
