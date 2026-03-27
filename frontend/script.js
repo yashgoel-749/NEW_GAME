@@ -3,7 +3,7 @@
 // For local dev, use ws://localhost:3000
 const BACKEND_URL = window.location.hostname === 'localhost'
     ? 'ws://localhost:3000'
-    : (window.RENDER_BACKEND_URL || 'wss://YOUR_RENDER_URL.onrender.com');  // ← Replace with your Render backend URL
+    : 'wss://new-game-7t7l.onrender.com';
 
 // ─── DOM Elements ────────────────────────────────────────
 const canvas = document.getElementById('gameCanvas');
