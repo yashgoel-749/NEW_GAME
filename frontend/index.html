@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid World — Multiplayer</title>
+    <meta name="description" content="A real-time multiplayer grid world game. Create or join a room and play with friends!">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Room Selection Screen -->
+    <div id="roomOverlay" class="overlay">
+        <div class="stars"></div>
+        <div class="glass-card" id="roomCard">
+            <div class="logo">🌍</div>
+            <h1>Grid World</h1>
+            <p class="subtitle">Real-time multiplayer adventure</p>
+
+            <div class="tab-group">
+                <button class="tab active" id="tabCreate" data-tab="create">Create World</button>
+                <button class="tab" id="tabJoin" data-tab="join">Join Room</button>
+            </div>
+
+            <div id="createPanel" class="panel active">
+                <p class="panel-desc">Create a new world and share the Room ID with a friend.</p>
+                <button id="createBtn" class="btn-primary">
+                    <span class="btn-icon">✨</span> Create New World
+                </button>
+            </div>
+
+            <div id="joinPanel" class="panel">
+                <p class="panel-desc">Enter the Room ID your friend shared with you.</p>
+                <input type="text" id="roomInput" placeholder="Enter Room ID..." maxlength="12" autocomplete="off" spellcheck="false">
+                <button id="joinBtn" class="btn-primary">
+                    <span class="btn-icon">🚀</span> Join Room
+                </button>
+            </div>
+
+            <div id="errorMsg" class="error hidden"></div>
+        </div>
+    </div>
+
+    <!-- Waiting for Player 2 Screen -->
+    <div id="waitingOverlay" class="overlay hidden">
+        <div class="glass-card waiting-card">
+            <div class="spinner"></div>
+            <h2>Waiting for Player 2...</h2>
+            <p class="subtitle">Share this Room ID with your friend:</p>
+            <div class="room-id-display">
+                <span id="waitingRoomId">---</span>
+                <button id="copyBtn" class="copy-btn" title="Copy Room ID">📋</button>
+            </div>
+            <p class="hint">Both players use <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> to move</p>
+        </div>
+    </div>
+
+    <!-- In-Game HUD -->
+    <div id="gameHud" class="hidden">
+        <div class="hud-left">
+            <div class="badge room-badge">🌍 <span id="hudRoom">---</span></div>
+            <div class="badge player-badge">👥 <span id="hudPlayers">0</span>/2</div>
+        </div>
+        <div class="hud-right">
+            <div class="badge you-badge">You: Player <span id="hudYou">?</span></div>
+        </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>
